@@ -26,7 +26,7 @@ switch($etape){
         $toDisplay = '<li>'.count($listeDB).' tables trouvées</li>';
         $listePrestaDB = getPrestashopTables($link, $listeDB);
         $toDisplay .= '<li>'.count($listePrestaDB).' tables prestashop trouvées</li>';
-
+        sleep(2);
         $nexData = $listePrestaDB;
         echo json_encode(
             array(
@@ -41,6 +41,8 @@ switch($etape){
     case 2:
         $currentDB = $_POST['table'];
         $toDisplay = '<ul><li>Traitement de la table '.$currentDB.'</li>';
+        sleep(2);
+        checklist($servername, $username, $password, $currentDB);
         echo json_encode(
             array(
                 'toDisplay' => $toDisplay,
@@ -99,15 +101,19 @@ function getPrestashopTables($link, $listeDB)
 }
 
 /** */
-function checklist($link, $table) {
+function checklist($servername, $username, $password, $table) {
     //Check que l'employé est bien crée
 
     // force la compile
     //PS_SMARTY_FORCE_COMPILE => 1
     //caCHE SMARTY
     //PS_SMARTY_CACHE => 1
-    if ($result = mysqli_query($link, "SELECT name FROM ps_configuration where name like '%PS_VERSION_DB%'")) {
+    $db = new mysqli($servername, $username, $password, $table);
+    $sql = "SELECT value FROM ps_configuration where name like '%PS_VERSION_DB%'";
 
+    if ($result = $db->query($sql)) {
+        $row = $result->fetch_object();
+        $prestaVers = $row->value;
     }
 }
 
