@@ -31,7 +31,8 @@
                 $('#reponse').html(reponse.toDisplay);
                 if (reponse.nbtoDig > 0) {
                     //console.log()
-                    reponse.listePrestaDB.forEach(element => {             
+                    reponse.listePrestaDB.forEach(element => {  
+                        console.log('traitement de ' + element)           
                         $.ajax({ 
                             type : 'POST',
                             url: "etapes.php",
