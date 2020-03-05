@@ -1,4 +1,9 @@
 <?php
+require __DIR__ . '/vendor/autoload.php';
+
+use Spipu\Html2Pdf\Exception\ExceptionFormatter;
+use Spipu\Html2Pdf\Exception\Html2PdfException;
+use Spipu\Html2Pdf\Html2Pdf;
 
 $etape = $_POST['etape'];
 
@@ -37,10 +42,28 @@ switch ($etape) {
 
     case 2:
         $currentDB = $_POST['table'];
-        $toDisplay = '<ul><li>Traitement de la table ' . $currentDB . '</li><ul>';
+        $toDisplay = '<ul><li>Traitement de la table ' . $currentDB . '<ul>';
 
         $toDisplay .= checklist($servername, $username, $password, $currentDB);
-        $toDisplay .= '</ul>';
+        $toDisplay .= '</ul></li></ul>';
+
+        //enregistrement dans un fichier
+        //file_put_contents(dirname(__FILE__) . '/' . $currentDB . '.html', $toDisplay);
+        ////$html2pdf = new Html2Pdf();
+        ////$html2pdf->writeHTML($toDisplay);
+        try {
+
+            $html2pdf = new Html2Pdf('P', 'A4', 'fr');
+            $html2pdf->setDefaultFont('Arial');
+            $html2pdf->writeHTML($toDisplay);
+            $html2pdf->output(dirname(__FILE__) .'/'. $currentDB . '_'. date('Ymdis').'.pdf', 'F');
+            ////$html2pdf->output('example00.pdf', 'F');
+        } catch (Html2PdfException $e) {
+            $html2pdf->clean();
+
+            $formatter = new ExceptionFormatter($e);
+            echo $formatter->getHtmlMessage();
+        }
         echo json_encode(
             array(
                 'toDisplay' => $toDisplay,
@@ -268,16 +291,12 @@ supprimer le module gamification*/
 
     $resultModule->close();
 
-    $response .= '</ul></li></li>';
+    $response .= '</ul></li>';
     /**** fin d'analyse des modules */
-/******* Administration *;******
-
-Donner les droits au groupe gérant
-Créer le compte utilisateur pour le partenaire avec le profil gérant
-TODO: test fonctionnel
-Vérification des accès kameleon (utilisateur / administrateur)
-TODO: Vérifier les infos dans le Log
-Remplir les informations de l'utilisateur dans le log*/
+/********************************************************* Administration *******************************************************
+TODO:Créer le compte utilisateur pour le partenaire avec le profil gérant
+TODO: test fonctionnel : Vérification des accès kameleon (utilisateur / administrateur)
+TODO: Vérifier les infos dans le Log et Remplir les informations de l'utilisateur dans le log*/
     $response .= '<li><b>Administration</b><ul>';
     //vérifier le profil Gérant
     $sqlRole = 'SELECT name, id_profile FROM ps_profile_lang WHERE name = "Gérant"';
@@ -337,93 +356,195 @@ Remplir les informations de l'utilisateur dans le log*/
         'ROLE_MOD_TAB_ADMINDASHBOARD_DELETE',
         'ROLE_MOD_TAB_ADMINDASHBOARD_READ',
         'ROLE_MOD_TAB_ADMINDASHBOARD_UPDATE',
+        'ROLE_MOD_TAB_SELL_CREATE',
+        'ROLE_MOD_TAB_SELL_DELETE',
+        'ROLE_MOD_TAB_SELL_READ',
+        'ROLE_MOD_TAB_SELL_UPDATE',
+        'ROLE_MOD_TAB_ADMINPARENTORDERS_CREATE',
+        'ROLE_MOD_TAB_ADMINPARENTORDERS_DELETE',
+        'ROLE_MOD_TAB_ADMINPARENTORDERS_READ',
+        'ROLE_MOD_TAB_ADMINPARENTORDERS_UPDATE',
+        'ROLE_MOD_TAB_ADMINSUPPLYORDERS_CREATE',
+        'ROLE_MOD_TAB_ADMINORDERS_CREATE',
+        'ROLE_MOD_TAB_ADMINORDERS_DELETE',
+        'ROLE_MOD_TAB_ADMINORDERS_READ',
+        'ROLE_MOD_TAB_ADMINORDERS_UPDATE',
+        'ROLE_MOD_TAB_ADMININVOICES_CREATE',
+        'ROLE_MOD_TAB_ADMININVOICES_DELETE',
+        'ROLE_MOD_TAB_ADMININVOICES_READ',
+        'ROLE_MOD_TAB_ADMININVOICES_UPDATE',
+        'ROLE_MOD_TAB_ADMINSLIP_CREATE',
+        'ROLE_MOD_TAB_ADMINSLIP_DELETE',
+        'ROLE_MOD_TAB_ADMINSLIP_READ',
+        'ROLE_MOD_TAB_ADMINSLIP_UPDATE',
+        'ROLE_MOD_TAB_ADMINDELIVERYSLIP_CREATE',
+        'ROLE_MOD_TAB_ADMINDELIVERYSLIP_DELETE',
+        'ROLE_MOD_TAB_ADMINDELIVERYSLIP_READ',
+        'ROLE_MOD_TAB_ADMINDELIVERYSLIP_UPDATE',
+        'ROLE_MOD_TAB_ADMINCATALOG_CREATE',
+        'ROLE_MOD_TAB_ADMINCATALOG_DELETE',
+        'ROLE_MOD_TAB_ADMINCATALOG_READ',
+        'ROLE_MOD_TAB_ADMINCATALOG_UPDATE',
+        'ROLE_MOD_TAB_ADMINPRODUCTS_CREATE',
+        'ROLE_MOD_TAB_ADMINPRODUCTS_DELETE',
+        'ROLE_MOD_TAB_ADMINPRODUCTS_READ',
+        'ROLE_MOD_TAB_ADMINPRODUCTS_UPDATE',
+        'ROLE_MOD_TAB_ADMINCATEGORIES_CREATE',
+        'ROLE_MOD_TAB_ADMINCATEGORIES_DELETE',
+        'ROLE_MOD_TAB_ADMINCATEGORIES_READ',
+        'ROLE_MOD_TAB_ADMINCATEGORIES_UPDATE',
+        'ROLE_MOD_TAB_ADMINFEATURES_CREATE',
+        'ROLE_MOD_TAB_ADMINFEATURES_DELETE',
+        'ROLE_MOD_TAB_ADMINFEATURES_READ',
+        'ROLE_MOD_TAB_ADMINFEATURES_UPDATE',
+        'ROLE_MOD_TAB_ADMINATTRIBUTESGROUPS_CREATE',
+        'ROLE_MOD_TAB_ADMINATTRIBUTESGROUPS_DELETE',
+        'ROLE_MOD_TAB_ADMINATTRIBUTESGROUPS_READ',
+        'ROLE_MOD_TAB_ADMINATTRIBUTESGROUPS_UPDATE',
+        'ROLE_MOD_TAB_ADMINPARENTATTRIBUTESGROUPS_CREATE',
+        'ROLE_MOD_TAB_ADMINPARENTATTRIBUTESGROUPS_DELETE',
+        'ROLE_MOD_TAB_ADMINPARENTATTRIBUTESGROUPS_READ',
+        'ROLE_MOD_TAB_ADMINPARENTATTRIBUTESGROUPS_UPDATE',
+        'ROLE_MOD_TAB_ADMINMANUFACTURERS_CREATE',
+        'ROLE_MOD_TAB_ADMINMANUFACTURERS_DELETE',
+        'ROLE_MOD_TAB_ADMINMANUFACTURERS_READ',
+        'ROLE_MOD_TAB_ADMINMANUFACTURERS_UPDATE',
+        'ROLE_MOD_TAB_ADMINPARENTMANUFACTURERS_CREATE',
+        'ROLE_MOD_TAB_ADMINPARENTMANUFACTURERS_DELETE',
+        'ROLE_MOD_TAB_ADMINPARENTMANUFACTURERS_READ',
+        'ROLE_MOD_TAB_ADMINPARENTMANUFACTURERS_UPDATE',
+        'ROLE_MOD_TAB_ADMINSUPPLIERS_CREATE',
+        'ROLE_MOD_TAB_ADMINSUPPLIERS_DELETE',
+        'ROLE_MOD_TAB_ADMINSUPPLIERS_READ',
+        'ROLE_MOD_TAB_ADMINSUPPLIERS_UPDATE',
+        'ROLE_MOD_TAB_ADMINATTACHMENTS_CREATE',
+        'ROLE_MOD_TAB_ADMINATTACHMENTS_DELETE',
+        'ROLE_MOD_TAB_ADMINATTACHMENTS_READ',
+        'ROLE_MOD_TAB_ADMINATTACHMENTS_UPDATE',
+        'ROLE_MOD_TAB_ADMINPARENTCARTRULES_CREATE',
+        'ROLE_MOD_TAB_ADMINPARENTCARTRULES_DELETE',
+        'ROLE_MOD_TAB_ADMINPARENTCARTRULES_READ',
+        'ROLE_MOD_TAB_ADMINPARENTCARTRULES_UPDATE',
+        'ROLE_MOD_TAB_ADMINCARTRULES_CREATE',
+        'ROLE_MOD_TAB_ADMINCARTRULES_DELETE',
+        'ROLE_MOD_TAB_ADMINCARTRULES_READ',
+        'ROLE_MOD_TAB_ADMINCARTRULES_UPDATE',
+        'ROLE_MOD_TAB_ADMINSPECIFICPRICERULE_CREATE',
+        'ROLE_MOD_TAB_ADMINSPECIFICPRICERULE_DELETE',
+        'ROLE_MOD_TAB_ADMINSPECIFICPRICERULE_READ',
+        'ROLE_MOD_TAB_ADMINSPECIFICPRICERULE_UPDATE',
     );
 
-    /*$sqlAccess = 'SELECT `slug`,`slug` LIKE "%ADMINDASHBOARD%" as "admindashbord" ,`slug` LIKE "%TAB_SELL%" as "adminsell"
-    FROM `' . _DB_PREFIX_ . 'authorization_role` a
-    LEFT JOIN `' . _DB_PREFIX_ . 'access` j ON j.id_authorization_role = a.id_authorization_role
-    WHERE j.`id_profile` = ' . (int) $idProfile;*/
+    /** Pur les presta 1.7 */
 
-    $sqlAccess = 'SELECT a.id_authorization_role, `slug`,
-                `slug` LIKE "%CREATE" as "add",
-                `slug` LIKE "%READ" as "view",
-                `slug` LIKE "%UPDATE" as "edit",
-                `slug` LIKE "%DELETE" as "delete"
-    FROM `' . _DB_PREFIX_ . 'authorization_role` a
-    LEFT JOIN `' . _DB_PREFIX_ . 'access` j ON j.id_authorization_role = a.id_authorization_role
-    WHERE j.`id_profile` = ' . (int) $idProfile;
+    if (version_compare($prestaVers, '1.7.0.0') >= 0) {
 
-    //echo $sqlAccess;
-
-    $lstAccess = array();
-    $accessDone = array();
-    if ($resultAccess = $db->query($sqlAccess)) {
-        while ($row = $resultAccess->fetch_object()) {
-            //print_r($row);
-            $lstAccess[] = get_object_vars($row);
-            echo $row->slug;
-            if ($row->slug == 'ROLE_MOD_TAB_ADMINDASHBOARD_CREATE') {
-                echo __LINE__;
-                if ($row->add == 1) {
-                    $response .= '<li class="text-success">Permission Ajout Dashboard Ok</li>';
-                } else {
-                    if ($db->query('INSERT INTO ps_access (id_profile,id_authorization_role) VALUES(' . (int) $idProfile . ', ' . $row->id_authorization_role . ')  ')) {
-                        $response .= '<li class="text-success">Permission Ajout Dashboard Ajouté</li>';
-                    } else {
-                        $response .= '<li class="text-success">Erreur Ajout Permission Ajout Dashboard : ' . $db->error . '</li>';
-                    }
-                }
-                $accessDone['ROLE_MOD_TAB_ADMINDASHBOARD_CREATE'] = 1;
-            } /*
-            else {
-            if ($db->query('INSERT INTO ps_access (id_profile,id_authorization_role) VALUES(' . (int) $idProfile . ', ' . $row->id_authorization_role . ')  ')) {
-            $response .= '<li class="text-success">Permission Ajout Dashboard Ajouté</li>';
-            } else {
-            $response .= '<li class="text-success">Erreur Ajout Permission Ajout Dashboard : ' . $db->error . '</li>';
+        $tblAccess = array();
+        $sqlListRole = "SELECT `slug`, `id_authorization_role` FROM `" . _DB_PREFIX_ . "authorization_role`";
+        if ($resultListRole = $db->query($sqlListRole)) {
+            while ($row = $resultListRole->fetch_array()) {
+                $tblAccess[$row['slug']] = $row['id_authorization_role'];
             }
-
-            }*/
-            //$response = '<li>PS Version '.$prestaVers.'</li>';
         }
 
-        //print_r($lstAccess);
+        //var_dump($tblAccess);
+
+        $sqlAccess = "SELECT a.`slug`, a.`id_authorization_role`, j.`id_profile` FROM `" . _DB_PREFIX_ . "authorization_role` a
+    LEFT JOIN `" . _DB_PREFIX_ . "access` j ON j.id_authorization_role = a.id_authorization_role
+    WHERE j.`id_profile` = " . (int) $idProfile . " AND a.`slug` IN ('" . implode("','", $accessList) . "')";
+
+        $lstAccess = array();
+
+        if ($resultAccess = $db->query($sqlAccess)) {
+            while ($row = $resultAccess->fetch_array()) {
+                //var_dump($row);
+                $lstAccess[] = $row[0];
+            }
+        } else {
+            echo '****' . $db->error;
+        }
+
+        foreach ($accessList as $key => $unacces) {
+            if (in_array($unacces, $lstAccess)) {
+                $response .= '<li class="text-success">Permission ' . $unacces . ' Ok</li>';
+            } else {
+
+                if ($db->query('INSERT INTO ps_access (id_profile,id_authorization_role) VALUES( ' . (int) $idProfile . ',' . (int) $tblAccess[$unacces] . ')  ')) {
+                    $response .= '<li class="text-success">Permission ' . $unacces . ' Ajouté</li>';
+                } else {
+                    $response .= '<li class="text-success">Erreur Ajout Permission ' . $unacces . ' : ' . $db->error . '</li>';
+                }
+            }
+
+        }
+
+    }
+    $response .= '</ul></li>';
+/**********************************************************************************************/
+
+    $response .= '<li><b>Paramètres avancés</b><ul>';
+    $configList = array(
+        'PS_SMARTY_FORCE_COMPILE' => 0, // 0
+        'PS_SMARTY_CACHE' => 1, //  0
+        //PS_SMARTY_CONSOLE
+        //PS_SMARTY_CONSOLE_KEY
+        'PS_SMARTY_CACHING_TYPE' => 'filesystem', //filesystem
+        'PS_SMARTY_CLEAR_CACHE' => 'never', // never
+        // debug Mode
+        //CCC
+        'PS_GIFT_WRAPPING' => 0, // 0
+        'PS_RECYCLABLE_PACK' => 0, // 0
+    );
+
+    $sqlConfig = "SELECT `name`, `value` FROM `" . _DB_PREFIX_ . "configuration`";
+
+    $lstConfig = array();
+
+    if ($resultConfig = $db->query($sqlConfig)) {
+        while ($row = $resultConfig->fetch_array()) {
+            //var_dump($row);
+            $lstConfig[$row['name']] = $row['value'];
+        }
     } else {
-        echo '*******************' . $db->error;
+        echo '****' . __LINE__ . $db->error;
     }
 
-    //On traite tous les droits non mis à jours
-   /* foreach ($accessList as $key => $value) {
-        if (!array_key_exists($key, $accessDone)) {
-            if ($db->query('INSERT INTO ps_access (id_profile,id_authorization_role) VALUES(' . (int) $idProfile . ', ' . $row->id_authorization_role . ')  ')) {
-                $response .= '<li class="text-success">Permission Ajout Dashboard Ajouté</li>';
+    //var_dump($lstConfig);
+
+    foreach ($configList as $key => $uneConfig) {
+        if ($lstConfig[$key] == $configList[$key]) {
+            $response .= '<li class="text-success">Configuration ' . $key . ' Ok</li>';
+        } else {
+
+            if ($db->query("UPDATE `" . _DB_PREFIX_ . "configuration`  SET value = '" . $configList[$key] . "' WHERE name = '" . $key . "'")) {
+                $response .= '<li class="text-warning">Configuration ' . $key . ' Modifiéé</li>';
             } else {
-                $response .= '<li class="text-success">Erreur Ajout Permission Ajout Dashboard : ' . $db->error . '</li>';
+                $response .= '<li class="text-danger">Erreur modif Configuration ' . $key . ' : ' . $db->error . '</li>';
             }
         }
-    }*/
-    /*- print_r($lstAccess);
-    if ($key = array_search('ROLE_MOD_TAB_ADMINDASHBOARD_CREATE', array_column($lstAccess, 'slug'))) {
-    echo '*************'.$key;
-    }*/
 
-    //echo $db->error;
+    }
 
-/**********************************************************************************************/
-/*Permission Gérant prestashop
-Paramètres avancés *
-Sélectionner l'option "Recompiler les fichiers de templates s'ils ont été mis à jour"
-Activer le cache
-Activer toutes les options de la partie CCC (CONCATÉNATION, COMPRESSION ET MISE EN CACHE)
-Configurer l'envoi des mails en SMTP à partir des information du log
-Vérifier l'adresse email du destinataire du formulaire de contact
-Faire un test d'envoi de mail depuis le formulaire de contact
-Préférences *
-Vérifier le logo des factures et des emails
-Désactiver "Proposer des emballages cadeaux"
-Désactiver "Proposer des emballages recyclés"
-Vérifier le nombre de produit par page pour correspondre à la maquette
+    $response .= '</ul></li>';
+    /*
+
+    Never recompile template files = 0
+    Recompile templates if the files have been updated = 1
+    Force compilation = 2
+
+    Activer toutes les options de la partie CCC (CONCATÉNATION, COMPRESSION ET MISE EN CACHE)
+    TODO: Configurer l'envoi des mails en SMTP à partir des information du log
+    TODO: Vérifier l'adresse email du destinataire du formulaire de contact
+    TODO: fonctionnel : Faire un test d'envoi de mail depuis le formulaire de contact
+     */
+
+    /****************************************************************************************************** */
+    $response .= '<li><b>Préférences</b></li>';
+/*
+TODO: Fonctionnel : Vérifier le logo des factures et des emails
+TODO: Vérifier le nombre de produit par page pour correspondre à la maquette
 Activer les URL simplifiée
-Remplir les coordonnées de la boutique
+TODO: Remplir les coordonnées de la boutique à partir du log
 Désactiver l'affichage des erreurs dans config/defines.inc.php
  */
 
