@@ -525,6 +525,23 @@ TODO: Vérifier les infos dans le Log et Remplir les informations de l'utilisate
 
     }
 
+
+
+    $response .= '</ul></li>';
+
+
+    /********************************************************* Préférences générales *******************************************************/
+    $response .= '<li><b>Préférences générales</b><ul>';
+
+/*
+Activer le SSL : OUI
+Activer le SSL sur tout le site OUI.
+Améliore la sécurité du front-office OUI
+Utiliser la bibliothèque HTMLPurifier OUI
+Afficher les fournisseurs et les fabricants OUI
+Afficher les meilleures ventes Oui
+
+*/
     $response .= '</ul></li>';
     /*
 
