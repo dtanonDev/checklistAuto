@@ -1,4 +1,29 @@
 <?php
+
+/** Inspiré des checklist store commander
+ * TODO: SECURITE : verifier la suppression des fichiers install.TXT, Install_PrestaShop.html et LICENCE
+ * TODO: SECURITE : verifier la suppresion de CHANGELOG.txt, readme_de.txt, readme_en.txt, readme_es.txt, readme_fr.txt, readme_it.txt
+ * TODO: SECURITE : vérifier la présence du fichier robots.txt
+ * TODO: SECURITE : verifier la suppression du dossier vendor/phpunit
+ * TODO: SECURITE : vérifier patch CVE-2020-5250 pour les version 1.7.6.0 à 1.7.6.3
+ * 
+ * TODO: check de securite connue
+ *  types of injection :
+ *     SQL Injections
+    XSS Injections
+    SHELL Commands Injections
+    Code Injections
+    CGI Injections
+
+
+    data thief :
+
+    Hotlinking protection
+    Files protection
+    Copy-Paste protection
+    Right Clic protection
+ * 
+ */
 require __DIR__ . '/vendor/autoload.php';
 
 use Spipu\Html2Pdf\Exception\ExceptionFormatter;
@@ -516,11 +541,12 @@ TODO: Vérifier les infos dans le Log et Remplir les informations de l'utilisate
             $response .= '<li class="text-success">Configuration ' . $key . ' Ok</li>';
         } else {
 
-            if ($db->query("UPDATE `" . _DB_PREFIX_ . "configuration`  SET value = '" . $configList[$key] . "' WHERE name = '" . $key . "'")) {
+            //TODO : GROS BUG
+           /* if ($db->query("UPDATE `" . _DB_PREFIX_ . "configuration`  SET value = '" . $configList[$key] . "' WHERE name = '" . $key . "'")) {
                 $response .= '<li class="text-warning">Configuration ' . $key . ' Modifiéé</li>';
             } else {
                 $response .= '<li class="text-danger">Erreur modif Configuration ' . $key . ' : ' . $db->error . '</li>';
-            }
+            }*/
         }
 
     }
